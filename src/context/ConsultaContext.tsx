@@ -24,13 +24,40 @@ interface ConsultaContextValue {
   clearConsulta: () => void;
   generateDraftText: (locality?: string) => string;
   copyDraftToClipboard: (locality?: string) => Promise<boolean>;
-  sendWhatsApp: (locality?: string) => void;
+  sendWhatsApp: (locality?: string) => boolean;
   announcedMessage: string;
 }
 
 const ConsultaContext = createContext<ConsultaContextValue | null>(null);
 
 const STORAGE_KEY = "vsv_consulta_cart_v2";
+
+function sanitizeItems(value: unknown): ConsultaItem[] {
+  if (!Array.isArray(value)) return [];
+
+  const sanitized = new Map<string, ConsultaItem>();
+  for (const entry of value) {
+    if (!entry || typeof entry !== "object") continue;
+    const candidate = entry as Partial<ConsultaItem>;
+    const product = PRODUCTS.find((item) => item.id === candidate.productId);
+    if (!product || !Number.isSafeInteger(candidate.qty) || (candidate.qty ?? 0) < 1) continue;
+
+    const variantId = candidate.variantId;
+    if (
+      variantId !== undefined &&
+      (typeof variantId !== "string" || !product.variants.some((variant) => variant.id === variantId))
+    ) continue;
+
+    const key = `${product.id}:${variantId ?? ""}`;
+    const previous = sanitized.get(key);
+    const qty = previous
+      ? Math.min(Number.MAX_SAFE_INTEGER, previous.qty + candidate.qty!)
+      : candidate.qty!;
+    sanitized.set(key, { productId: product.id, variantId, qty });
+  }
+
+  return [...sanitized.values()];
+}
 
 export function ConsultaProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<ConsultaItem[]>([]);
@@ -44,15 +71,7 @@ export function ConsultaProvider({ children }: { children: React.ReactNode }) {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          // validate and keep only items that reference existing products
-          const valid = parsed.filter(
-            (it) => it && typeof it.productId === "string" && typeof it.qty === "number" && it.qty > 0 &&
-            PRODUCTS.some((p) => p.id === it.productId)
-          );
-          setItems(valid);
-        }
+        setItems(sanitizeItems(JSON.parse(raw) as unknown));
       }
     } catch {
       // LocalStorage error or invalid JSON: start clean
@@ -72,7 +91,12 @@ export function ConsultaProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = (productId: string, qty: number, variantId?: string) => {
     const product = PRODUCTS.find((p) => p.id === productId);
-    if (!product || qty <= 0) return;
+    if (
+      !product ||
+      !Number.isSafeInteger(qty) ||
+      qty <= 0 ||
+      (variantId !== undefined && !product.variants.some((variant) => variant.id === variantId))
+    ) return;
 
     setItems((prev) => {
       const existingIndex = prev.findIndex(
@@ -83,7 +107,7 @@ export function ConsultaProvider({ children }: { children: React.ReactNode }) {
         const next = [...prev];
         next[existingIndex] = {
           ...next[existingIndex],
-          qty: next[existingIndex].qty + qty,
+          qty: Math.min(Number.MAX_SAFE_INTEGER, next[existingIndex].qty + qty),
         };
         return next;
       }
@@ -96,6 +120,7 @@ export function ConsultaProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateQty = (productId: string, qty: number, variantId?: string) => {
+    if (!Number.isSafeInteger(qty)) return;
     if (qty <= 0) {
       removeItem(productId, variantId);
       return;
@@ -125,9 +150,14 @@ export function ConsultaProvider({ children }: { children: React.ReactNode }) {
 
   const clearConsulta = () => {
     setItems([]);
+    setAnnouncedMessage("Se vació la lista de consulta.");
+    setTimeout(() => setAnnouncedMessage(""), 4000);
   };
 
-  const totalUnits = items.reduce((acc, item) => acc + item.qty, 0);
+  const totalUnits = items.reduce(
+    (acc, item) => Math.min(Number.MAX_SAFE_INTEGER, acc + item.qty),
+    0
+  );
 
   const generateDraftText = (locality?: string) => {
     let msg = `Hola ${VIVERO_CONFIG.name}! Quisiera consultar disponibilidad y precios por:\n\n`;
@@ -167,7 +197,13 @@ export function ConsultaProvider({ children }: { children: React.ReactNode }) {
   const sendWhatsApp = (locality?: string) => {
     const text = generateDraftText(locality);
     const url = `https://wa.me/${VIVERO_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    try {
+      const popup = window.open(url, "_blank");
+      if (popup) popup.opener = null;
+      return popup !== null;
+    } catch {
+      return false;
+    }
   };
 
   return (

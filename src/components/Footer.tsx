@@ -42,6 +42,9 @@ export default function Footer() {
             <Link href="/catalogo" className="hover:text-primary hover:underline">
               Catálogo
             </Link>
+            <Link href="/mayoristas" className="hover:text-primary hover:underline">
+              Mayoristas
+            </Link>
             <Link href="/contacto" className="hover:text-primary hover:underline">
               Contacto
             </Link>

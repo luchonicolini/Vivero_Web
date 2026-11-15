@@ -46,7 +46,6 @@ export interface Product {
   images: {
     src: string;
     alt: string;
-    fallbackKey: string;
   }[];
   variants: ProductVariant[];
 }
@@ -79,13 +78,11 @@ export const PRODUCTS: Product[] = [
     images: [
       {
         src: "/images/monstera.jpg",
-        alt: "Monstera deliciosa en maceta para interior",
-        fallbackKey: "monstera",
+        alt: "Monstera deliciosa con hojas grandes y fenestradas, en maceta. Foto ilustrativa.",
       },
       {
-        src: "/images/monstera-2.jpg",
-        alt: "Detalle de hoja de Monstera deliciosa",
-        fallbackKey: "monstera",
+        src: "/images/galeria-3.webp",
+        alt: "Otra vista ilustrativa de una planta ornamental de interior; no necesariamente Monstera.",
       },
     ],
     variants: [
@@ -111,9 +108,8 @@ export const PRODUCTS: Product[] = [
     isDemo: true,
     images: [
       {
-        src: "/images/potus.jpg",
-        alt: "Potus colgante con follaje brillante",
-        fallbackKey: "potus",
+        src: "/images/galeria-3.webp",
+        alt: "Planta de interior de follaje verde. Foto ilustrativa; no representa necesariamente un potus.",
       },
     ],
     variants: [
@@ -140,8 +136,7 @@ export const PRODUCTS: Product[] = [
     images: [
       {
         src: "/images/sansevieria.jpg",
-        alt: "Sansevieria espada de San Jorge",
-        fallbackKey: "sansevieria",
+        alt: "Sansevieria de hojas erguidas en maceta. Foto ilustrativa.",
       },
     ],
     variants: [
@@ -167,8 +162,7 @@ export const PRODUCTS: Product[] = [
     images: [
       {
         src: "/images/petunias.jpg",
-        alt: "Cantero con petunias de colores vivos",
-        fallbackKey: "petunias",
+        alt: "Petunias violetas florecidas en maceta. Foto ilustrativa.",
       },
     ],
     variants: [
@@ -195,8 +189,7 @@ export const PRODUCTS: Product[] = [
     images: [
       {
         src: "/images/limonero.jpg",
-        alt: "Planta de limonero con frutos y flores",
-        fallbackKey: "citricos",
+        alt: "Limonero en maceta con frutos amarillos. Foto ilustrativa.",
       },
     ],
     variants: [
@@ -222,9 +215,8 @@ export const PRODUCTS: Product[] = [
     isDemo: true,
     images: [
       {
-        src: "/images/lavanda.jpg",
-        alt: "Mata de lavanda con flores aromáticas",
-        fallbackKey: "exterior",
+        src: "/images/petunias.jpg",
+        alt: "Flores ornamentales violetas en maceta; imagen ilustrativa, no identifica lavanda.",
       },
     ],
     variants: [
@@ -248,9 +240,8 @@ export const PRODUCTS: Product[] = [
     isDemo: true,
     images: [
       {
-        src: "/images/macetas.jpg",
-        alt: "Colección de macetas de barro y cerámica",
-        fallbackKey: "macetas",
+        src: "/images/galeria-2.webp",
+        alt: "Sustrato y herramientas de jardinería; imagen ilustrativa para la categoría macetas e insumos.",
       },
     ],
     variants: [
@@ -275,9 +266,8 @@ export const PRODUCTS: Product[] = [
     isDemo: true,
     images: [
       {
-        src: "/images/huerta.jpg",
-        alt: "Bandeja de plantines de huerta saludables",
-        fallbackKey: "huerta",
+        src: "/images/albahaca.jpg",
+        alt: "Plantines jóvenes de albahaca en macetas. Foto ilustrativa.",
       },
     ],
     variants: [
@@ -303,8 +293,7 @@ export const PRODUCTS: Product[] = [
     images: [
       {
         src: "/images/naranjo.jpg",
-        alt: "Naranjo injertado listo para plantar",
-        fallbackKey: "citricos",
+        alt: "Árbol cítrico en maceta con frutos amarillos. Foto ilustrativa.",
       },
     ],
     variants: [

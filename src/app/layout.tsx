@@ -46,6 +46,7 @@ export default function RootLayout({
     <html lang="es-AR" className={`${baskerville.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col bg-background text-ink selection:bg-sage selection:text-primary">
         <ConsultaProvider>
+          <a className="skip-link" href="#main-content">Saltar al contenido</a>
           <A11yAnnouncer />
           <Header />
           <main id="main-content" className="flex-1">

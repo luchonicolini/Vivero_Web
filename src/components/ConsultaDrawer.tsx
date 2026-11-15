@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useConsulta } from "@/context/ConsultaContext";
-import { PRODUCTS } from "@/data/vivero";
+import { PRODUCTS, VIVERO_CONFIG } from "@/data/vivero";
 import PlantImage from "./PlantImage";
 
 export default function ConsultaDrawer() {
@@ -16,29 +16,30 @@ export default function ConsultaDrawer() {
     removeItem,
     clearConsulta,
     sendWhatsApp,
+    generateDraftText,
     copyDraftToClipboard,
   } = useConsulta();
 
   const [locality, setLocality] = useState("");
   const [copied, setCopied] = useState(false);
-  const drawerRef = useRef<HTMLDivElement>(null);
+  const [copyError, setCopyError] = useState(false);
+  const [whatsAppFallbackUrl, setWhatsAppFallbackUrl] = useState("");
+  const drawerRef = useRef<HTMLDialogElement>(null);
 
   // Close on Escape & trap focus
   useEffect(() => {
     if (!drawerOpen) return;
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setDrawerOpen(false);
-      }
-    };
+    const previousOverflow = document.body.style.overflow;
+    const dialog = drawerRef.current;
+    if (!dialog) return;
+    if (!dialog.open) dialog.showModal();
 
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleKeyDown);
+      if (dialog.open) dialog.close();
+      document.body.style.overflow = previousOverflow;
     };
   }, [drawerOpen, setDrawerOpen]);
 
@@ -48,29 +49,30 @@ export default function ConsultaDrawer() {
     const success = await copyDraftToClipboard(locality);
     if (success) {
       setCopied(true);
+      setCopyError(false);
       setTimeout(() => setCopied(false), 2500);
+    } else {
+      setCopyError(true);
     }
   };
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Panel de Mi Consulta"
-    >
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-ink/40 backdrop-blur-[1px] transition-opacity"
-        onClick={() => setDrawerOpen(false)}
-        aria-hidden="true"
-      />
+  const handleSendWhatsApp = () => {
+    if (sendWhatsApp(locality)) {
+      setWhatsAppFallbackUrl("");
+      return;
+    }
+    const message = encodeURIComponent(generateDraftText(locality));
+    setWhatsAppFallbackUrl(`https://wa.me/${VIVERO_CONFIG.whatsappNumber}?text=${message}`);
+  };
 
-      {/* Drawer content (desktop 420px, full-width mobile) */}
-      <div
-        ref={drawerRef}
-        className="relative z-10 w-full max-w-[420px] bg-surface h-full flex flex-col shadow-2xl border-l border-borderline"
-      >
+  return (
+    <dialog
+      className="animate-drawer fixed inset-0 m-0 ml-auto h-dvh max-h-dvh w-full max-w-[420px] flex-col border-l border-borderline bg-surface p-0 text-ink shadow-2xl backdrop:bg-ink/40 backdrop:backdrop-blur-[1px]"
+      aria-label="Panel de Mi Consulta"
+      onCancel={(event) => { event.preventDefault(); setDrawerOpen(false); }}
+      onClick={(event) => { if (event.target === event.currentTarget) setDrawerOpen(false); }}
+      ref={drawerRef}
+    >
         {/* Header */}
         <div className="bg-sage px-6 py-4 flex items-center justify-between border-b border-borderline text-primary">
           <div className="flex items-center gap-2">
@@ -87,7 +89,7 @@ export default function ConsultaDrawer() {
           <button
             type="button"
             onClick={() => setDrawerOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded text-2xl text-primary hover:bg-black/5 cursor-pointer leading-none"
+            className="w-11 h-11 flex items-center justify-center rounded text-2xl text-primary hover:bg-black/5 cursor-pointer leading-none"
             aria-label="Cerrar panel de consulta"
           >
             &times;
@@ -124,8 +126,7 @@ export default function ConsultaDrawer() {
                       <div className="w-16 h-14 rounded overflow-hidden border border-borderline shrink-0">
                         <PlantImage
                           src={product.images[0]?.src || "/images/monstera.jpg"}
-                          alt={product.commonName}
-                          fallbackKey={product.images[0]?.fallbackKey || "interior"}
+                          alt={product.images[0]?.alt || product.commonName}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -145,7 +146,7 @@ export default function ConsultaDrawer() {
                             <button
                               type="button"
                               onClick={() => updateQty(item.productId, item.qty - 1, item.variantId)}
-                              className="w-7 h-7 flex items-center justify-center font-bold text-primary hover:bg-sage/40"
+                              className="w-11 h-11 flex items-center justify-center font-bold text-primary hover:bg-sage/40"
                               aria-label={`Restar una unidad de ${product.commonName}`}
                             >
                               −
@@ -156,7 +157,7 @@ export default function ConsultaDrawer() {
                             <button
                               type="button"
                               onClick={() => updateQty(item.productId, item.qty + 1, item.variantId)}
-                              className="w-7 h-7 flex items-center justify-center font-bold text-primary hover:bg-sage/40"
+                              className="w-11 h-11 flex items-center justify-center font-bold text-primary hover:bg-sage/40"
                               aria-label={`Sumar una unidad de ${product.commonName}`}
                             >
                               +
@@ -169,7 +170,7 @@ export default function ConsultaDrawer() {
                       <button
                         type="button"
                         onClick={() => removeItem(item.productId, item.variantId)}
-                        className="text-muted hover:text-error p-1 text-lg leading-none cursor-pointer"
+                        className="w-11 h-11 flex items-center justify-center text-muted hover:text-error text-lg leading-none cursor-pointer"
                         aria-label={`Eliminar ${product.commonName} de la consulta`}
                       >
                         &times;
@@ -204,7 +205,8 @@ export default function ConsultaDrawer() {
                   value={locality}
                   onChange={(e) => setLocality(e.target.value)}
                   placeholder="Ej: Goya centro, zona rural, otra localidad"
-                  className="w-full text-sm px-3 py-2 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
+                  maxLength={120}
+                  className="w-full min-w-0 text-base px-3 py-2 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
                 />
               </div>
 
@@ -234,7 +236,7 @@ export default function ConsultaDrawer() {
           <div className="p-5 border-t border-borderline bg-background space-y-2.5">
             <button
               type="button"
-              onClick={() => sendWhatsApp(locality)}
+              onClick={handleSendWhatsApp}
               className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-surface font-semibold py-3 px-4 rounded-md transition cursor-pointer text-sm"
             >
               <svg className="w-5 h-5 text-whatsapp" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -243,20 +245,31 @@ export default function ConsultaDrawer() {
               <span>Preparar consulta por WhatsApp</span>
             </button>
 
+            {whatsAppFallbackUrl && (
+              <p className="text-sm text-error" role="alert">
+                El navegador bloqueó la ventana. <a href={whatsAppFallbackUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2">Abrir WhatsApp</a>
+              </p>
+            )}
+
             <button
               type="button"
               onClick={handleCopy}
-              className="w-full py-2 px-3 text-xs font-semibold text-primary hover:bg-sage/40 rounded border border-controlBorder transition cursor-pointer text-center"
+              className="w-full min-h-11 py-2 px-3 text-xs font-semibold text-primary hover:bg-sage/40 rounded border border-controlBorder transition cursor-pointer text-center"
             >
               {copied ? "✓ Mensaje copiado al portapapeles" : "Copiar borrador de mensaje"}
             </button>
+
+            {copyError && (
+              <p className="text-sm text-error" role="alert">
+                No se pudo copiar el mensaje. Podés continuar con el botón de WhatsApp.
+              </p>
+            )}
 
             <p className="text-[11px] text-center text-muted">
               Al hacer clic se abrirá WhatsApp con el borrador listo para que lo revises antes de enviar.
             </p>
           </div>
         )}
-      </div>
-    </div>
+    </dialog>
   );
 }

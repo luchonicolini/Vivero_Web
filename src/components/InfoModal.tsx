@@ -1,39 +1,40 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useConsulta } from "@/context/ConsultaContext";
 import { VIVERO_CONFIG } from "@/data/vivero";
 
 export default function InfoModal() {
   const { modalType, setModalType } = useConsulta();
+  const modalRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (!modalType) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setModalType(null);
+    const previousOverflow = document.body.style.overflow;
+    const dialog = modalRef.current;
+    if (!dialog) return;
+    if (!dialog.open) dialog.showModal();
+    document.body.style.overflow = "hidden";
+    return () => {
+      if (dialog.open) dialog.close();
+      document.body.style.overflow = previousOverflow;
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalType, setModalType]);
 
   if (!modalType) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-ink/40 flex items-center justify-center p-4 backdrop-blur-[1px]"
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      className="animate-modal fixed inset-0 z-50 m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-lg border border-borderline bg-surface p-6 shadow-xl backdrop:bg-ink/40 backdrop:backdrop-blur-[1px] sm:p-7"
       aria-labelledby="infoModalHeading"
-      onClick={() => setModalType(null)}
+      onCancel={(event) => { event.preventDefault(); setModalType(null); }}
+      onClick={(event) => { if (event.target === event.currentTarget) setModalType(null); }}
+      ref={modalRef}
     >
-      <div
-        className="bg-surface border border-borderline rounded-lg max-w-md w-full p-6 sm:p-7 relative shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
         <button
           type="button"
           onClick={() => setModalType(null)}
-          className="absolute top-4 right-4 text-2xl text-primary hover:bg-black/5 w-8 h-8 rounded flex items-center justify-center leading-none cursor-pointer"
+          className="absolute top-4 right-4 text-2xl text-primary hover:bg-black/5 w-11 h-11 rounded flex items-center justify-center leading-none cursor-pointer"
           aria-label="Cerrar modal de información"
         >
           &times;
@@ -69,12 +70,11 @@ export default function InfoModal() {
           <button
             type="button"
             onClick={() => setModalType(null)}
-            className="py-2.5 px-4 text-sm font-medium border border-controlBorder rounded hover:bg-sage/30 transition text-ink cursor-pointer"
+            className="min-h-11 py-2.5 px-4 text-sm font-medium border border-controlBorder rounded hover:bg-sage/30 transition text-ink cursor-pointer"
           >
             Cerrar
           </button>
         </div>
-      </div>
-    </div>
+    </dialog>
   );
 }

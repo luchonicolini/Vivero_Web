@@ -12,7 +12,10 @@ function removeAccents(str: string): string {
 
 function CatalogoContent() {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("categoria");
+  const requestedCategory = searchParams.get("categoria");
+  const initialCategory = CATEGORIES.some((category) => category.label === requestedCategory)
+    ? requestedCategory!
+    : "Todas";
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory || "Todas");
@@ -76,20 +79,21 @@ function CatalogoContent() {
       <section className="relative overflow-hidden bg-primary text-surface py-12 md:py-16 text-center">
         <div className="absolute inset-0 opacity-20">
           <PlantImage
-            src="/images/banner-catalogo.jpg"
+            src="/images/hero-vivero.webp"
             alt="Catálogo botánico"
-            fallbackKey="catalog-hero"
             className="w-full h-full object-cover"
+            loading="eager"
+            priority
           />
         </div>
-        <div className="relative z-10 max-w-2xl mx-auto px-5 sm:px-8 space-y-4">
+        <div className="relative z-10 mx-auto w-full min-w-0 max-w-2xl px-5 sm:px-8 space-y-4">
           <nav className="text-xs text-sage flex items-center justify-center gap-1.5 mb-2" aria-label="Ruta de navegación">
             <Link href="/" className="hover:underline">Inicio</Link>
             <span>/</span>
             <span className="font-semibold text-surface">Catálogo</span>
           </nav>
 
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.025em]">
+          <h1 className="mx-auto max-w-full break-words font-serif text-[clamp(1.75rem,7.4vw,3rem)] sm:text-4xl lg:text-5xl font-bold tracking-[-0.025em]">
             Encontrá tu próxima planta
           </h1>
           <p className="text-sm sm:text-base text-surface/90">
@@ -97,7 +101,7 @@ function CatalogoContent() {
           </p>
 
           {/* Search bar */}
-          <div className="pt-2">
+          <search aria-label="Buscar en el catálogo" className="block pt-2">
             <label htmlFor="catalogSearch" className="sr-only">
               Buscar plantas o productos
             </label>
@@ -111,7 +115,7 @@ function CatalogoContent() {
                   setCurrentPage(1);
                 }}
                 placeholder="Buscar plantas o productos (ej: monstera, lavanda, limonero)..."
-                className="w-full bg-surface text-ink text-sm sm:text-base rounded-full pl-11 pr-4 py-3 outline-none focus:ring-2 focus:ring-sage shadow-md"
+                className="w-full min-w-0 bg-surface text-ink text-base rounded-full pl-11 pr-4 py-3 outline-none focus:ring-2 focus:ring-sage shadow-md"
               />
               <svg
                 className="w-5 h-5 text-muted absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
@@ -125,7 +129,7 @@ function CatalogoContent() {
                 <path d="M21 21l-4.35-4.35" />
               </svg>
             </div>
-          </div>
+          </search>
         </div>
       </section>
 
@@ -136,18 +140,19 @@ function CatalogoContent() {
 
       <div className="max-w-content mx-auto px-5 sm:px-8 py-10">
         {/* Category Pills Strip */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-8" role="radiogroup" aria-label="Filtro rápido por categoría">
+        <div className="flex min-w-0 flex-wrap items-center justify-center gap-2 mb-8" role="group" aria-label="Filtro rápido por categoría">
           <button
             type="button"
             onClick={() => {
               setActiveCategory("Todas");
               setCurrentPage(1);
             }}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer ${
+            className={`min-h-11 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer ${
               activeCategory === "Todas"
                 ? "bg-primary text-surface border-primary"
                 : "bg-surface text-primary border-borderline hover:border-primary"
             }`}
+            aria-pressed={activeCategory === "Todas"}
           >
             Todas ({PRODUCTS.length})
           </button>
@@ -159,11 +164,12 @@ function CatalogoContent() {
                 setActiveCategory(cat.label);
                 setCurrentPage(1);
               }}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer ${
+              className={`min-h-11 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer ${
                 activeCategory === cat.label
                   ? "bg-primary text-surface border-primary"
                   : "bg-surface text-primary border-borderline hover:border-primary"
               }`}
+              aria-pressed={activeCategory === cat.label}
             >
               {cat.label}
             </button>
@@ -179,6 +185,16 @@ function CatalogoContent() {
                 Categorías
               </h2>
               <div className="space-y-2 text-sm text-ink">
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="sidebarCategory"
+                    checked={activeCategory === "Todas"}
+                    onChange={() => { setActiveCategory("Todas"); setCurrentPage(1); }}
+                    className="text-primary focus:ring-focusRing"
+                  />
+                  <span>Todas las categorías</span>
+                </label>
                 {CATEGORIES.map((cat) => (
                   <label key={cat.label} className="flex items-center gap-2.5 cursor-pointer">
                     <input
@@ -227,8 +243,8 @@ function CatalogoContent() {
 
           {/* Product Results */}
           <section aria-label="Resultados de plantas">
-            <div className="flex items-center justify-between text-xs sm:text-sm text-muted mb-4 pb-2 border-b border-borderline">
-              <span>Mostrando {filteredProducts.length} variedad(es)</span>
+            <div className="flex items-center justify-between text-xs sm:text-sm text-muted mb-4 pb-2 border-b border-borderline" aria-live="polite" aria-atomic="true">
+              <span>Mostrando {paginated.length} de {filteredProducts.length} variedades</span>
               {(searchQuery || activeCategory !== "Todas" || selectedLights.length > 0) && (
                 <button
                   type="button"
@@ -262,7 +278,7 @@ function CatalogoContent() {
                   {paginated.map((product) => (
                     <article
                       key={product.id}
-                      className="bg-surface border border-borderline rounded-lg overflow-hidden flex flex-col text-center"
+                      className="card-lift bg-surface border border-borderline rounded-lg overflow-hidden flex flex-col text-left"
                     >
                       <Link
                         href={`/catalogo/${product.slug}`}
@@ -270,8 +286,7 @@ function CatalogoContent() {
                       >
                         <PlantImage
                           src={product.images[0]?.src || "/images/monstera.jpg"}
-                          alt={product.commonName}
-                          fallbackKey={product.images[0]?.fallbackKey || "interior"}
+                          alt={product.images[0]?.alt || product.commonName}
                           className="w-full h-full object-cover hover:scale-102 transition-transform duration-300"
                         />
                       </Link>
@@ -309,12 +324,12 @@ function CatalogoContent() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-10" aria-label="Paginación de productos">
+                  <nav className="flex flex-wrap items-center justify-center gap-2 mt-10" aria-label="Paginación de productos">
                     <button
                       type="button"
                       disabled={safePage === 1}
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      className="px-3 py-1.5 rounded border border-borderline bg-surface text-sm font-semibold disabled:opacity-40 cursor-pointer"
+                      className="min-h-11 px-3 py-1.5 rounded border border-borderline bg-surface text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                       aria-label="Página anterior"
                     >
                       ‹ Anterior
@@ -324,7 +339,7 @@ function CatalogoContent() {
                         key={num}
                         type="button"
                         onClick={() => setCurrentPage(num)}
-                        className={`w-9 h-9 rounded text-sm font-semibold transition cursor-pointer ${
+                        className={`min-h-11 min-w-11 rounded text-sm font-semibold transition cursor-pointer ${
                           num === safePage
                             ? "bg-primary text-surface font-bold"
                             : "bg-surface border border-borderline text-ink hover:bg-sage/30"
@@ -339,12 +354,12 @@ function CatalogoContent() {
                       type="button"
                       disabled={safePage === totalPages}
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      className="px-3 py-1.5 rounded border border-borderline bg-surface text-sm font-semibold disabled:opacity-40 cursor-pointer"
+                      className="min-h-11 px-3 py-1.5 rounded border border-borderline bg-surface text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                       aria-label="Página siguiente"
                     >
                       Siguiente ›
                     </button>
-                  </div>
+                  </nav>
                 )}
               </>
             )}

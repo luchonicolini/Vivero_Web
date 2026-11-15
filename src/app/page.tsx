@@ -12,12 +12,12 @@ export default function HomePage() {
   return (
     <>
       {/* 2. Hero Section */}
-      <section className="relative overflow-hidden border-b border-borderline bg-background">
-        <div className="max-w-content mx-auto px-5 sm:px-8 py-12 md:py-20 lg:py-24">
+      <section className="animate-in-soft relative overflow-hidden border-b border-borderline bg-background">
+        <div className="max-w-content mx-auto w-full min-w-0 px-5 sm:px-8 py-12 md:py-20 lg:py-24">
           <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
             {/* Copy: 5 columns on desktop */}
-            <div className="md:col-span-5 space-y-6">
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[60px] font-bold text-primary leading-[1.08] tracking-[-0.035em]">
+            <div className="min-w-0 md:col-span-5 space-y-6">
+              <h1 className="font-serif text-[clamp(2.5rem,5vw,4rem)] font-bold text-primary leading-[1.08] tracking-[-0.035em] max-w-[12ch]">
                 Un poco más<br />de verde en<br />tu vida.
               </h1>
 
@@ -32,7 +32,7 @@ export default function HomePage() {
                 <path d="M72 11 C84 3, 102 4, 114 9 C103 17, 86 18, 72 11 Z" stroke="currentColor" strokeWidth="1.5" fill="rgba(24,61,35,0.08)" />
               </svg>
 
-              <p className="text-base sm:text-lg text-ink/90 leading-relaxed max-w-md">
+              <p className="w-full min-w-0 text-base sm:text-lg text-ink/90 leading-relaxed max-w-md">
                 Conocé nuestras plantas, flores y productos para tu jardín.
               </p>
 
@@ -48,16 +48,18 @@ export default function HomePage() {
             </div>
 
             {/* Photograph: 7 columns on desktop */}
-            <div className="md:col-span-7">
+            <div className="min-w-0 md:col-span-7">
               <div className="relative rounded-lg overflow-hidden border border-borderline shadow-sm aspect-[5/4] sm:aspect-[4/3] md:aspect-[5/4] bg-surface">
                 <PlantImage
-                  src="/images/hero-vivero.jpg"
-                  alt="Sector de plantas y flores de Vivero Siempre Verde"
-                  fallbackKey="hero-home"
+                  src="/images/hero-vivero.webp"
+                  alt="Vista ilustrativa del interior de un vivero con plantas y flores"
                   className="w-full h-full object-cover"
                   loading="eager"
                   priority
                 />
+                <span className="absolute bottom-3 left-3 rounded bg-surface/90 px-2.5 py-1 text-xs font-medium text-primary">
+                  Foto ilustrativa
+                </span>
               </div>
             </div>
           </div>
@@ -76,9 +78,22 @@ export default function HomePage() {
               >
                 <div className="aspect-[3/2] overflow-hidden bg-sage/30">
                   <PlantImage
-                    src={`/images/cat-${cat.key}.jpg`}
-                    alt={cat.label}
-                    fallbackKey={cat.key}
+                    src={
+                      cat.key === "huerta" ? "/images/albahaca.jpg" :
+                      cat.key === "macetas" ? "/images/galeria-2.webp" :
+                      cat.key === "interior" ? "/images/monstera.jpg" :
+                      cat.key === "citricos" ? "/images/limonero.jpg" :
+                      cat.key === "exterior" ? "/images/petunias.jpg" :
+                      "/images/hero-vivero.webp"
+                    }
+                    alt={
+                      cat.key === "huerta" ? "Plantines de albahaca en macetas, foto ilustrativa" :
+                      cat.key === "macetas" ? "Sustrato y herramientas de jardinería" :
+                      cat.key === "interior" ? "Monstera en maceta, foto ilustrativa" :
+                      cat.key === "citricos" ? "Limonero con frutos en maceta, foto ilustrativa" :
+                      cat.key === "exterior" ? "Petunias violetas florecidas, foto ilustrativa" :
+                      "Interior de vivero con plantas y flores"
+                    }
                     className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                   />
                 </div>
@@ -106,7 +121,7 @@ export default function HomePage() {
             {featured.map((product) => (
               <article
                 key={product.id}
-                className="bg-surface border border-borderline rounded-lg overflow-hidden flex flex-col text-center"
+                  className="card-lift bg-surface border border-borderline rounded-lg overflow-hidden flex flex-col text-center"
               >
                 <Link
                   href={`/catalogo/${product.slug}`}
@@ -114,8 +129,7 @@ export default function HomePage() {
                 >
                   <PlantImage
                     src={product.images[0]?.src || "/images/monstera.jpg"}
-                    alt={product.commonName}
-                    fallbackKey={product.images[0]?.fallbackKey || "interior"}
+                    alt={product.images[0]?.alt || product.commonName}
                     className="w-full h-full object-cover hover:scale-102 transition-transform duration-300"
                   />
                 </Link>
@@ -130,7 +144,7 @@ export default function HomePage() {
 
                   <Link
                     href={`/catalogo/${product.slug}`}
-                    className="inline-flex items-center justify-center min-h-[40px] px-4 rounded border border-controlBorder hover:border-primary text-primary hover:bg-primary hover:text-surface text-sm font-semibold transition-colors mx-auto"
+                    className="inline-flex items-center justify-center min-h-[44px] px-4 rounded border border-controlBorder hover:border-primary text-primary hover:bg-primary hover:text-surface text-sm font-semibold transition-colors mx-auto"
                   >
                     Ver producto <span className="ml-1" aria-hidden="true">›</span>
                   </Link>
@@ -157,9 +171,8 @@ export default function HomePage() {
             <div className="md:col-span-6">
               <div className="rounded-lg overflow-hidden border border-borderline aspect-[4/3] bg-background">
                 <PlantImage
-                  src="/images/nosotros-vivero.jpg"
-                  alt="Plantas y cultivo en Vivero Siempre Verde"
-                  fallbackKey="about"
+                  src="/images/nosotros-vivero.webp"
+                  alt="Imagen ilustrativa de follaje verde en un jardín"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -202,15 +215,14 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
             {[
-              { src: "/images/galeria-1.jpg", alt: "Flores de hibisco cultivadas en el vivero", key: "exterior" },
-              { src: "/images/galeria-2.jpg", alt: "Pasillo de cultivo y plantines", key: "huerta" },
-              { src: "/images/galeria-3.jpg", alt: "Agapantos y plantas ornamentales", key: "citricos" },
+              { src: "/images/galeria-1.webp", alt: "Plantines jóvenes en bandejas de cultivo" },
+              { src: "/images/galeria-2.webp", alt: "Preparación de tierra y herramientas para trasplantar" },
+              { src: "/images/galeria-3.webp", alt: "Follaje de una planta de interior" },
             ].map((img, i) => (
               <div key={i} className="aspect-[4/3] rounded-lg overflow-hidden border border-borderline bg-surface">
                 <PlantImage
                   src={img.src}
                   alt={img.alt}
-                  fallbackKey={img.key}
                   className="w-full h-full object-cover"
                 />
               </div>

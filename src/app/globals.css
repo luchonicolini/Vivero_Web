@@ -21,6 +21,7 @@
     scroll-behavior: smooth;
     background-color: var(--color-background);
     color: var(--color-text);
+    scrollbar-color: var(--color-control-border) var(--color-background);
   }
 
   body {
@@ -29,6 +30,24 @@
     font-family: var(--font-inter), system-ui, sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+  }
+
+  :where(h1, h2, h3) {
+    text-wrap: balance;
+  }
+
+  :where(p, li) {
+    text-wrap: pretty;
+  }
+
+  dialog:not([open]) {
+    display: none;
+  }
+
+  input:user-invalid,
+  textarea:user-invalid,
+  select:user-invalid {
+    border-color: var(--color-error);
   }
 
   /* Accessibility focus ring with ivory offset as required by design brief */
@@ -47,6 +66,97 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+::selection {
+  color: var(--color-primary);
+  background: var(--color-sage);
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-160%);
+  border-radius: 0.375rem;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 18%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-in-soft {
+    animation: soft-enter 420ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
+  }
+
+  .animate-backdrop {
+    animation: backdrop-enter 220ms ease-out both;
+  }
+
+  .animate-drawer {
+    animation: drawer-enter 280ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
+  }
+
+  .animate-modal {
+    animation: modal-enter 220ms ease-out both;
+  }
+
+  .animate-menu {
+    transform-origin: top;
+    animation: menu-enter 180ms ease-out both;
+  }
+
+  .animate-confirm {
+    animation: confirm-enter 240ms ease-out both;
+  }
+
+  .card-lift {
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .card-lift:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-control-border);
+    box-shadow: 0 10px 24px rgb(24 61 35 / 8%);
+  }
+}
+
+@keyframes soft-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes drawer-enter {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes modal-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes menu-enter {
+  from { opacity: 0; transform: translateY(-6px) scaleY(0.98); }
+  to { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+@keyframes confirm-enter {
+  0% { opacity: 0; transform: translateY(5px); }
+  70% { opacity: 1; transform: translateY(-1px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* Custom editorial decorative flourish */

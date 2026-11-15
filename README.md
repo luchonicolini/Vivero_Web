@@ -38,22 +38,15 @@ Desarrollado con **Next.js (App Router)**, **React 19**, **TypeScript** y **Tail
 
 Como se estipula en `DESIGN_BRIEF.md`:
 - **Catálogo de demostración:** Los productos actuales (`Monstera`, `Potus`, `Sansevieria`, `Petunias`, `Limonero`, `Lavanda`, `Macetas`, `Huerta`, `Naranjo`) son variedades de muestra mientras el vivero confecciona su inventario confirmado.
-- **Fotografías reales pendientes:** Para incorporar las fotos reales del vivero, guardá las imágenes en la carpeta `public/images/` con los nombres correspondientes:
-  - `hero-vivero.jpg` (portada)
-  - `nosotros-vivero.jpg` (equipo/cultivo)
-  - `frente-vivero.jpg` (fachada o entrada)
-  - `galeria-1.jpg`, `galeria-2.jpg`, `galeria-3.jpg` (tira de fotos)
+- **Fotos ilustrativas temporales:** La portada, la sección institucional y la galería usan imágenes de muestra de [Unsplash](https://unsplash.com/license), optimizadas en WebP dentro de `public/images/`. No representan el vivero ni su inventario real.
+- **Fotografías reales pendientes:** Cuando estén disponibles, reemplazá las imágenes de muestra en `public/images/` conservando estos nombres y formato WebP:
+  - `hero-vivero.webp` (portada)
+  - `nosotros-vivero.webp` (equipo/cultivo)
+  - `frente-vivero.webp` (fachada o entrada)
+  - `galeria-1.webp`, `galeria-2.webp`, `galeria-3.webp` (tira de fotos)
+  - Para productos, actualizá las rutas de imagen correspondientes en `src/data/vivero.ts`.
   - `monstera.jpg`, `potus.jpg`, `petunias.jpg`, `limonero.jpg`, `lavanda.jpg`, `macetas.jpg`, `huerta.jpg`, `naranjo.jpg` (plantas)
 - **Datos a confirmar antes de producción:** La dirección física exacta en Goya y los horarios de atención según temporada están configurados en `src/data/vivero.ts` para ser confirmados por WhatsApp.
-
----
-
-## 🖼️ Imágenes de referencia del diseño
-
-Las capturas y mockups de referencia visual se encuentran archivados en [`docs/references/`](docs/references/):
-- `01-inicio-hogar-botanico.jpg` / `.png`: Composición de la página de Inicio (Home).
-- `02-catalogo-y-consulta.jpg` / `.png`: Vistas de Catálogo, Filtros y Ficha de Producto con Mi Consulta.
-- `03-mayoristas-y-contacto.jpg` / `.png`: Vistas de Mayoristas, Formulario de pedido y Contacto.
 
 ---
 
@@ -74,4 +67,12 @@ Las capturas y mockups de referencia visual se encuentran archivados en [`docs/r
 ```bash
 npm run build
 npm run start
+```
+
+## 🎨 Skill de diseño Impeccable
+
+El proyecto incluye la skill local de Impeccable en `.agents/skills/impeccable/`. En una nueva sesión de Codex, podés invocar `$impeccable harden` para revisar y robustecer una pantalla. La pasada actual endureció validación y límites del formulario mayorista, apertura de WhatsApp, recuperación de datos guardados y manejo del foco en paneles y modales. El detector manual se ejecuta con:
+
+```powershell
+.agents\skills\impeccable\scripts\impeccable.cmd detect --json src
 ```

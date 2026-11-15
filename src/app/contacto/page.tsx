@@ -20,14 +20,15 @@ export default function ContactoPage() {
       <section className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
         {/* Photo */}
         <div className="md:col-span-6">
-          <div className="aspect-[4/3] rounded-lg overflow-hidden border border-borderline bg-surface shadow-sm">
+          <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-borderline bg-surface shadow-sm">
             <PlantImage
-              src="/images/frente-vivero.jpg"
-              alt="Frente de vivero en Goya, Corrientes"
-              fallbackKey="contact"
+              src="/images/hero-vivero.webp"
+              alt="Vista ilustrativa del interior de un vivero con plantas y flores"
               className="w-full h-full object-cover"
               loading="eager"
+              priority
             />
+            <span className="absolute bottom-3 left-3 rounded bg-surface/90 px-2.5 py-1 text-xs font-medium text-primary">Foto ilustrativa</span>
           </div>
         </div>
 
@@ -53,7 +54,7 @@ export default function ContactoPage() {
             </h2>
 
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center justify-between">
+              <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                 <span className="font-medium text-ink">WhatsApp directo:</span>
                 <a
                   href={VIVERO_CONFIG.whatsappUrl}
@@ -68,7 +69,7 @@ export default function ContactoPage() {
                 </a>
               </li>
 
-              <li className="flex items-center justify-between">
+              <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                 <span className="font-medium text-ink">Instagram:</span>
                 <a
                   href={VIVERO_CONFIG.instagramUrl}
@@ -80,7 +81,7 @@ export default function ContactoPage() {
                 </a>
               </li>
 
-              <li className="flex items-center justify-between">
+              <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                 <span className="font-medium text-ink">Facebook:</span>
                 <a
                   href={VIVERO_CONFIG.facebookUrl}
@@ -92,7 +93,7 @@ export default function ContactoPage() {
                 </a>
               </li>
 
-              <li className="flex items-center justify-between">
+              <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                 <span className="font-medium text-ink">Threads:</span>
                 <a
                   href={VIVERO_CONFIG.threadsUrl}

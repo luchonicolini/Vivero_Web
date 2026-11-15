@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useConsulta } from "@/context/ConsultaContext";
 import { VIVERO_CONFIG } from "@/data/vivero";
 
@@ -10,6 +10,22 @@ export default function Header() {
   const pathname = usePathname();
   const { totalUnits, setDrawerOpen } = useConsulta();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const mobileMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const scrollSentinelRef = useRef<HTMLSpanElement>(null);
+
+  // Add depth only after the utility bar has scrolled out of view.
+  useEffect(() => {
+    const sentinel = scrollSentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsScrolled(!entry.isIntersecting);
+    });
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -21,6 +37,7 @@ export default function Header() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && mobileMenuOpen) {
         setMobileMenuOpen(false);
+        mobileMenuTriggerRef.current?.focus();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -53,18 +70,19 @@ export default function Header() {
           <span>{VIVERO_CONFIG.locationShort} · Vivero botánico</span>
         </div>
       </div>
+      <span ref={scrollSentinelRef} aria-hidden="true" className="block h-px" />
 
       {/* Main Header */}
-      <header className="sticky top-0 z-40 bg-background border-b border-borderline">
-        <div className="max-w-content mx-auto px-5 sm:px-8 py-3.5 flex items-center justify-between gap-4">
+      <header className={`sticky top-0 z-40 bg-background border-b border-borderline transition-shadow duration-300 motion-reduce:transition-none ${isScrolled ? "shadow-[0_8px_24px_rgba(24,61,35,0.11)]" : "shadow-none"}`}>
+        <div className="max-w-content mx-auto w-full min-w-0 px-3 sm:px-8 py-3.5 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand */}
           <Link
             href="/"
-            className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-focusRing focus-visible:outline-offset-2 rounded"
+            className="flex min-w-0 items-center gap-2 sm:gap-3 focus-visible:outline-2 focus-visible:outline-focusRing focus-visible:outline-offset-2 rounded"
             aria-label={`${VIVERO_CONFIG.name} - Ir al inicio`}
           >
             <svg
-              className="w-12 sm:w-14 h-auto shrink-0"
+              className="w-10 sm:w-14 h-auto shrink-0"
               viewBox="0 0 88 54"
               fill="none"
               aria-hidden="true"
@@ -81,10 +99,10 @@ export default function Header() {
             </svg>
 
             <div className="flex flex-col">
-              <span className="font-serif font-bold text-lg sm:text-xl leading-tight text-primary">
+              <span className="font-serif font-bold text-base sm:text-xl leading-tight text-primary">
                 Vivero<br className="hidden sm:inline" /> Siempre Verde
               </span>
-              <span className="text-[10px] tracking-widest text-muted uppercase font-medium mt-0.5">
+              <span className="text-[9px] sm:text-[10px] tracking-widest text-muted uppercase font-medium mt-0.5">
                 — Goya · Corrientes —
               </span>
             </div>
@@ -101,6 +119,7 @@ export default function Header() {
                     ? "font-bold text-primary border-b-2 border-primary"
                     : "font-medium text-ink hover:text-primary hover:bg-sage/40"
                 }`}
+                aria-current={link.active ? "page" : undefined}
               >
                 {link.label}
               </Link>
@@ -108,11 +127,12 @@ export default function Header() {
           </nav>
 
           {/* Actions: Mi consulta & Mobile Menu Toggle */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
             <button
+              ref={mobileMenuTriggerRef}
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className="inline-flex items-center gap-2 border border-controlBorder hover:border-primary text-primary hover:bg-primary hover:text-surface transition-colors rounded-md px-3.5 py-2 text-sm font-semibold cursor-pointer"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 border border-controlBorder hover:border-primary text-primary hover:bg-primary hover:text-surface transition-colors rounded-md px-2.5 sm:px-3.5 py-2 text-xs sm:text-sm font-semibold cursor-pointer"
               aria-label={`Mi consulta con ${totalUnits} unidades agregadas`}
             >
               <svg
@@ -123,14 +143,16 @@ export default function Header() {
               >
                 <path d="M17.5 3C11 3 6 8 6 14.5c0 1.7.4 3.3 1.1 4.7L4 22l1.4 1.4 3.1-3.1c1.4.7 3 1.1 4.7 1.1C19.7 21.4 22 15.6 22 9.1 22 5.7 19.9 3 17.5 3z" />
               </svg>
-              <span>Mi consulta ({totalUnits})</span>
+              <span className="hidden sm:inline">Mi consulta ({totalUnits})</span>
+              <span className="sr-only sm:hidden">Mi consulta</span>
+              <span className="sm:hidden text-[11px] tabular-nums" aria-hidden="true">{totalUnits}</span>
             </button>
 
             {/* Mobile hamburger */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-primary rounded border border-borderline"
+              className="md:hidden min-h-11 min-w-11 flex items-center justify-center p-2 text-primary rounded border border-borderline"
               aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú de navegación"}
               aria-expanded={mobileMenuOpen}
             >
@@ -154,17 +176,19 @@ export default function Header() {
 
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-borderline bg-surface px-5 py-3 shadow-lg">
+        <div className="animate-menu md:hidden border-t border-borderline bg-surface px-3 py-3 shadow-lg">
             <nav className="flex flex-col gap-2" aria-label="Menú móvil">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`py-2 px-3 rounded-md text-base ${
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`min-h-11 py-2 px-3 rounded-md text-base ${
                     link.active
                       ? "font-bold text-primary bg-sage/50"
                       : "text-ink hover:bg-sage/20"
                   }`}
+                  aria-current={link.active ? "page" : undefined}
                 >
                   {link.label}
                 </Link>

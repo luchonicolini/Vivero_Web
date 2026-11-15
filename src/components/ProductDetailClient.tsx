@@ -54,9 +54,9 @@ export default function ProductDetailClient({ product, relatedProducts }: Props)
             <PlantImage
               src={currentImage?.src || "/images/monstera.jpg"}
               alt={currentImage?.alt || product.name}
-              fallbackKey={currentImage?.fallbackKey || "interior"}
               className="w-full h-full object-cover"
               loading="eager"
+              priority
             />
           </div>
 
@@ -74,11 +74,11 @@ export default function ProductDetailClient({ product, relatedProducts }: Props)
                       : "border-borderline hover:border-primary"
                   }`}
                   aria-label={`Ver foto ${idx + 1} de ${product.commonName}`}
+                  aria-pressed={selectedImgIndex === idx}
                 >
                   <PlantImage
                     src={img.src}
                     alt={img.alt}
-                    fallbackKey={img.fallbackKey}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -141,7 +141,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Props)
                 id="variantSelect"
                 value={selectedVariantId}
                 onChange={(e) => setSelectedVariantId(e.target.value)}
-                className="w-full bg-surface border border-controlBorder rounded-md px-3.5 py-2.5 text-sm text-ink outline-none focus:ring-2 focus:ring-focusRing"
+                className="w-full min-w-0 bg-surface border border-controlBorder rounded-md px-3.5 py-2.5 text-base text-ink outline-none focus:ring-2 focus:ring-focusRing"
               >
                 {product.variants.map((v) => (
                   <option key={v.id} value={v.id}>
@@ -169,7 +169,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Props)
                 <button
                   type="button"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="w-10 h-10 flex items-center justify-center font-bold text-primary hover:bg-sage/40 text-lg cursor-pointer"
+                  className="w-11 h-11 flex items-center justify-center font-bold text-primary hover:bg-sage/40 text-lg cursor-pointer"
                   aria-label="Restar una unidad"
                 >
                   −
@@ -180,7 +180,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Props)
                 <button
                   type="button"
                   onClick={() => setQty((q) => q + 1)}
-                  className="w-10 h-10 flex items-center justify-center font-bold text-primary hover:bg-sage/40 text-lg cursor-pointer"
+                  className="w-11 h-11 flex items-center justify-center font-bold text-primary hover:bg-sage/40 text-lg cursor-pointer"
                   aria-label="Sumar una unidad"
                 >
                   +
@@ -210,7 +210,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Props)
             </div>
 
             {addedNotice && (
-              <div className="p-3 bg-sage border border-primary/30 rounded text-xs text-primary font-semibold text-center animate-fade-in">
+              <div className="animate-confirm p-3 bg-sage border border-primary/30 rounded text-xs text-primary font-semibold text-center">
                 ✓ Se agregaron {qty} unidad(es) a tu consulta.
               </div>
             )}
@@ -234,8 +234,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Props)
                 <Link href={`/catalogo/${rel.slug}`} className="aspect-[4/3] overflow-hidden bg-background block">
                   <PlantImage
                     src={rel.images[0]?.src || "/images/monstera.jpg"}
-                    alt={rel.commonName}
-                    fallbackKey={rel.images[0]?.fallbackKey || "interior"}
+                    alt={rel.images[0]?.alt || rel.commonName}
                     className="w-full h-full object-cover hover:scale-102 transition-transform duration-300"
                   />
                 </Link>

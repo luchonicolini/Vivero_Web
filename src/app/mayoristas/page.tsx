@@ -5,10 +5,10 @@ import PlantImage from "@/components/PlantImage";
 import { VIVERO_CONFIG } from "@/data/vivero";
 
 const WHOLESALE_CATEGORIES = [
-  { label: "Plantas ornamentales", img: "/images/may-ornamentales.jpg", key: "exterior" },
-  { label: "Cítricos y frutales", img: "/images/may-citricos.jpg", key: "citricos" },
-  { label: "Plantines de huerta", img: "/images/may-huerta.jpg", key: "huerta" },
-  { label: "Macetas e insumos", img: "/images/may-macetas.jpg", key: "macetas" },
+  { label: "Plantas ornamentales", img: "/images/flores.jpg", alt: "Maceta con flores ornamentales" },
+  { label: "Cítricos y frutales", img: "/images/limonero.jpg", alt: "Limonero en maceta con frutos" },
+  { label: "Plantines de huerta", img: "/images/albahaca.jpg", alt: "Plantines de albahaca" },
+  { label: "Macetas e insumos", img: "/images/galeria-2.webp", alt: "Sustrato y herramientas de jardinería" },
 ];
 
 export default function MayoristasPage() {
@@ -17,10 +17,16 @@ export default function MayoristasPage() {
   const [city, setCity] = useState("");
   const [details, setDetails] = useState("");
   const [submittedNotice, setSubmittedNotice] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [fallbackWhatsAppUrl, setFallbackWhatsAppUrl] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !city.trim() || !details.trim()) return;
+    if (!name.trim() || !city.trim() || !details.trim()) {
+      setSubmittedNotice(false);
+      setFormError("Completá nombre, localidad y detalle del pedido. Los campos no pueden contener solo espacios.");
+      return;
+    }
 
     let text = `Hola ${VIVERO_CONFIG.name}! Consulta de PEDIDO MAYORISTA:\n\n`;
     text += `• Nombre y apellido: ${name.trim()}\n`;
@@ -32,7 +38,16 @@ export default function MayoristasPage() {
     text += `Aguardo condiciones comerciales y disponibilidad. Muchas gracias!`;
 
     const url = `https://wa.me/${VIVERO_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    setFallbackWhatsAppUrl("");
+    const openedWindow = window.open(url, "_blank");
+    if (!openedWindow) {
+      setSubmittedNotice(false);
+      setFormError("El navegador bloqueó la ventana de WhatsApp. Abrila con este enlace para continuar.");
+      setFallbackWhatsAppUrl(url);
+      return;
+    }
+    openedWindow.opener = null;
+    setFormError("");
     setSubmittedNotice(true);
   };
 
@@ -65,14 +80,15 @@ export default function MayoristasPage() {
         </div>
 
         <div className="md:col-span-6">
-          <div className="aspect-[4/3] rounded-lg overflow-hidden border border-borderline bg-surface shadow-sm">
+          <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-borderline bg-surface shadow-sm">
             <PlantImage
-              src="/images/mayoristas-hero.jpg"
-              alt="Producción y cultivo mayorista en vivero"
-              fallbackKey="wholesale"
+              src="/images/hero-vivero.webp"
+              alt="Vista ilustrativa de un vivero con plantas y flores"
               className="w-full h-full object-cover"
               loading="eager"
+              priority
             />
+            <span className="absolute bottom-3 left-3 rounded bg-surface/90 px-2.5 py-1 text-xs font-medium text-primary">Foto ilustrativa</span>
           </div>
         </div>
       </section>
@@ -118,19 +134,18 @@ export default function MayoristasPage() {
           ¿Qué estás buscando?
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           {WHOLESALE_CATEGORIES.map((cat) => (
             <button
               key={cat.label}
               type="button"
               onClick={() => handleSelectTopic(cat.label)}
-              className="group bg-surface border border-borderline hover:border-primary rounded-lg overflow-hidden text-center transition cursor-pointer flex flex-col"
+              className="group min-h-12 bg-surface border border-borderline hover:border-primary rounded-lg overflow-hidden text-center transition cursor-pointer flex flex-col focus-visible:outline-2 focus-visible:outline-focusRing"
             >
               <div className="aspect-[4/3] overflow-hidden bg-background">
                 <PlantImage
                   src={cat.img}
-                  alt={cat.label}
-                  fallbackKey={cat.key}
+                  alt={`${cat.alt}, imagen ilustrativa`}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                 />
               </div>
@@ -150,7 +165,7 @@ export default function MayoristasPage() {
           {/* Enquiry form (7 columns) */}
           <div className="md:col-span-7 bg-surface border border-borderline rounded-lg p-6 sm:p-8 space-y-5">
             <div>
-              <h2 className="font-serif text-2xl font-bold text-primary">
+              <h2 id="wholesaleFormHeading" className="font-serif text-2xl font-bold text-primary">
                 Contanos sobre tu pedido
               </h2>
               <p className="text-xs text-muted mt-1">
@@ -158,19 +173,37 @@ export default function MayoristasPage() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} aria-labelledby="wholesaleFormHeading" className="space-y-4">
+              {formError && (
+                <div className="rounded border border-error/40 bg-error/5 p-3 text-sm text-error" role="alert" aria-live="polite">
+                  <p>{formError}</p>
+                  {fallbackWhatsAppUrl && (
+                    <a
+                      href={fallbackWhatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-block font-semibold underline underline-offset-2"
+                    >
+                      Abrir WhatsApp
+                    </a>
+                  )}
+                </div>
+              )}
               <div>
                 <label htmlFor="wsName" className="block text-xs font-semibold text-primary mb-1">
                   Nombre y apellido <span className="text-error" aria-hidden="true">*</span>
                 </label>
                 <input
                   id="wsName"
+                  name="name"
+                  autoComplete="name"
                   type="text"
                   required
+                  maxLength={100}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { setName(e.target.value); setFormError(""); setFallbackWhatsAppUrl(""); }}
                   placeholder="Tu nombre completo"
-                  className="w-full text-sm px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
+                  className="w-full min-w-0 text-base px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
                 />
               </div>
 
@@ -180,11 +213,14 @@ export default function MayoristasPage() {
                 </label>
                 <input
                   id="wsBusiness"
+                  name="organization"
+                  autoComplete="organization"
                   type="text"
+                  maxLength={120}
                   value={business}
-                  onChange={(e) => setBusiness(e.target.value)}
+                  onChange={(e) => { setBusiness(e.target.value); setFormError(""); setFallbackWhatsAppUrl(""); }}
                   placeholder="Ej: Vivero, paisajismo, revendedor, obras"
-                  className="w-full text-sm px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
+                  className="w-full min-w-0 text-base px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
                 />
               </div>
 
@@ -194,12 +230,15 @@ export default function MayoristasPage() {
                 </label>
                 <input
                   id="wsCity"
+                  name="city"
+                  autoComplete="address-level2"
                   type="text"
                   required
+                  maxLength={120}
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={(e) => { setCity(e.target.value); setFormError(""); setFallbackWhatsAppUrl(""); }}
                   placeholder="Ej: Goya, Bella Vista, Corrientes Capital..."
-                  className="w-full text-sm px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
+                  className="w-full min-w-0 text-base px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
                 />
               </div>
 
@@ -209,12 +248,14 @@ export default function MayoristasPage() {
                 </label>
                 <textarea
                   id="wsDetails"
+                  name="orderDetails"
                   rows={4}
                   required
+                  maxLength={2000}
                   value={details}
-                  onChange={(e) => setDetails(e.target.value)}
+                  onChange={(e) => { setDetails(e.target.value); setFormError(""); setFallbackWhatsAppUrl(""); }}
                   placeholder="Detallá variedades de plantas, tamaños de envase o macetas, o cantidades estimadas..."
-                  className="w-full text-sm px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
+                  className="w-full min-w-0 text-base px-3.5 py-2.5 border border-controlBorder rounded bg-background focus:outline-2 focus:outline-focusRing"
                 />
               </div>
 
