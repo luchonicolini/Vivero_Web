@@ -48,6 +48,15 @@ Como se estipula en `DESIGN_BRIEF.md`:
 
 ---
 
+## 🖼️ Imágenes de referencia del diseño
+
+Las capturas y mockups de referencia visual se encuentran archivados en [`docs/references/`](docs/references/):
+- `01-inicio-hogar-botanico.jpg` / `.png`: Composición de la página de Inicio (Home).
+- `02-catalogo-y-consulta.jpg` / `.png`: Vistas de Catálogo, Filtros y Ficha de Producto con Mi Consulta.
+- `03-mayoristas-y-contacto.jpg` / `.png`: Vistas de Mayoristas, Formulario de pedido y Contacto.
+
+---
+
 ## 🚀 Cómo ejecutar en desarrollo
 
 1. Instalar dependencias:
