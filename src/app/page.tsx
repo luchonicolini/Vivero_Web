@@ -14,7 +14,7 @@ export default function HomePage() {
       {/* 2. Hero Section */}
       <section className="animate-in-soft relative overflow-hidden border-b border-borderline bg-background">
         <div className="max-w-content mx-auto w-full min-w-0 px-5 sm:px-8 py-12 md:py-20 lg:py-24">
-          <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
+          <div className="grid min-w-0 grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
             {/* Copy: 5 columns on desktop */}
             <div className="min-w-0 md:col-span-5 space-y-6">
               <h1 className="font-serif text-[clamp(2.5rem,5vw,4rem)] font-bold text-primary leading-[1.08] tracking-[-0.035em] max-w-[12ch]">
@@ -68,7 +68,7 @@ export default function HomePage() {
 
       {/* 3. Category Strip */}
       <section className="py-12 sm:py-16 bg-surface border-b border-borderline" aria-label="Categorías principales">
-        <div className="max-w-content mx-auto px-5 sm:px-8">
+        <div className="max-w-content mx-auto min-w-0 px-5 sm:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {CATEGORIES.map((cat) => (
               <Link
@@ -110,7 +110,7 @@ export default function HomePage() {
 
       {/* 4. "Un jardín de posibilidades" (Featured products) */}
       <section className="py-16 sm:py-20 bg-background border-b border-borderline" aria-labelledby="featuredHeading">
-        <div className="max-w-content mx-auto px-5 sm:px-8">
+        <div className="max-w-content mx-auto min-w-0 px-5 sm:px-8">
           <div className="leaf-divider mb-10 sm:mb-12">
             <h2 id="featuredHeading" className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-primary text-center tracking-[-0.025em]">
               Un jardín de posibilidades
@@ -167,8 +167,8 @@ export default function HomePage() {
       {/* 5. "Conocé Siempre Verde" */}
       <section className="py-16 sm:py-20 bg-surface border-b border-borderline" aria-labelledby="aboutHeading">
         <div className="max-w-content mx-auto px-5 sm:px-8">
-          <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
-            <div className="md:col-span-6">
+          <div className="grid min-w-0 grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
+            <div className="min-w-0 md:col-span-6">
               <div className="rounded-lg overflow-hidden border border-borderline aspect-[4/3] bg-background">
                 <PlantImage
                   src="/images/nosotros-vivero.webp"
@@ -178,7 +178,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="md:col-span-6 space-y-4">
+            <div className="min-w-0 space-y-4 md:col-span-6">
               <h2 id="aboutHeading" className="font-serif text-3xl sm:text-4xl font-bold text-primary tracking-[-0.025em]">
                 Conocé Siempre Verde
               </h2>
@@ -193,10 +193,10 @@ export default function HomePage() {
                 <path d="M72 11 C84 3, 102 4, 114 9 C103 17, 86 18, 72 11 Z" stroke="currentColor" strokeWidth="1.5" fill="rgba(24,61,35,0.08)" />
               </svg>
 
-              <p className="text-base sm:text-lg text-ink leading-relaxed">
+              <p className="min-w-0 text-base sm:text-lg text-ink leading-relaxed [overflow-wrap:anywhere]">
                 Un vivero en Goya para encontrar plantas, flores y compartir el amor por el jardín.
               </p>
-              <p className="text-sm text-muted leading-relaxed">
+              <p className="min-w-0 text-sm text-muted leading-relaxed [overflow-wrap:anywhere]">
                 Cultivamos y seleccionamos variedades adaptadas al clima de nuestra región, asesorándote en cada consulta para que disfrutes de tu espacio verde en casa o en tu proyecto.
               </p>
             </div>

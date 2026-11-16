@@ -9,7 +9,7 @@ export default function ContactoPage() {
   const { setModalType } = useConsulta();
 
   return (
-    <div className="max-w-content mx-auto px-5 sm:px-8 py-10 sm:py-16 space-y-12 sm:space-y-16">
+    <div className="max-w-content mx-auto w-full min-w-0 px-5 sm:px-8 py-10 sm:py-16 space-y-12 sm:space-y-16">
       {/* Breadcrumb */}
       <nav className="text-xs sm:text-sm text-muted flex items-center gap-2" aria-label="Ruta de navegación">
         <Link href="/" className="hover:underline hover:text-primary">Inicio</Link>
@@ -17,9 +17,9 @@ export default function ContactoPage() {
         <strong className="text-primary font-semibold">Contacto</strong>
       </nav>
 
-      <section className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
+      <section className="grid min-w-0 grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
         {/* Photo */}
-        <div className="md:col-span-6">
+        <div className="min-w-0 md:col-span-6">
           <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-borderline bg-surface shadow-sm">
             <PlantImage
               src="/images/hero-vivero.webp"
@@ -33,7 +33,7 @@ export default function ContactoPage() {
         </div>
 
         {/* Contact Info */}
-        <div className="md:col-span-6 space-y-6">
+        <div className="min-w-0 space-y-6 md:col-span-6">
           <div>
             <span className="text-xs uppercase tracking-widest text-muted font-semibold block mb-2">
               Atención y consultas
@@ -43,24 +43,24 @@ export default function ContactoPage() {
             </h1>
           </div>
 
-          <p className="text-base text-ink leading-relaxed">
+          <p className="min-w-0 text-base text-ink leading-relaxed [overflow-wrap:anywhere]">
             Atendemos consultas minoristas y mayoristas de manera directa y personalizada a través de nuestros canales oficiales.
           </p>
 
           {/* Social and WhatsApp links */}
-          <div className="bg-surface border border-borderline rounded-lg p-5 space-y-3">
+          <div className="min-w-0 bg-surface border border-borderline rounded-lg p-5 space-y-3">
             <h2 className="font-serif font-bold text-base text-primary pb-2 border-b border-borderline">
               Canales de contacto verificados
             </h2>
 
-            <ul className="space-y-3 text-sm">
+            <ul className="min-w-0 space-y-3 text-sm">
               <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                 <span className="font-medium text-ink">WhatsApp directo:</span>
                 <a
                   href={VIVERO_CONFIG.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-primary underline hover:text-primary-hover flex items-center gap-1.5"
+                  className="min-w-0 font-semibold text-primary underline hover:text-primary-hover flex items-center gap-1.5 [overflow-wrap:anywhere]"
                 >
                   <svg className="w-4 h-4 text-whatsapp" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12.04 2a9.9 9.9 0 0 0-8.52 15l-1.1 4 4.1-1.08A9.92 9.92 0 1 0 12.04 2zm5.8 14.08c-.24.68-1.42 1.3-1.97 1.38-.52.08-1.18.11-1.9-.12-.44-.14-1-.33-1.72-.64-3.03-1.31-5-4.38-5.15-4.58-.15-.2-1.23-1.64-1.23-3.13 0-1.49.78-2.22 1.06-2.52.27-.3.6-.38.8-.38h.58c.18 0 .44-.07.68.52.25.6.85 2.08.92 2.23.08.15.13.33.03.53-.1.2-.15.33-.3.5-.15.18-.32.4-.45.54-.15.15-.3.32-.13.62.18.3.78 1.29 1.68 2.09 1.15 1.03 2.13 1.35 2.43 1.5.3.15.48.13.66-.08.18-.2.75-.88.95-1.18.2-.3.4-.25.68-.15.28.1 1.77.84 2.07.99.3.15.5.22.58.35.08.12.08.73-.17 1.41z"/>
@@ -75,7 +75,7 @@ export default function ContactoPage() {
                   href={VIVERO_CONFIG.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-primary underline hover:text-primary-hover"
+                  className="min-w-0 font-semibold text-primary underline hover:text-primary-hover [overflow-wrap:anywhere]"
                 >
                   @vivero.siempre.verde
                 </a>
@@ -87,7 +87,7 @@ export default function ContactoPage() {
                   href={VIVERO_CONFIG.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-primary underline hover:text-primary-hover"
+                  className="min-w-0 font-semibold text-primary underline hover:text-primary-hover [overflow-wrap:anywhere]"
                 >
                   Vivero Siempre Verde
                 </a>
@@ -99,7 +99,7 @@ export default function ContactoPage() {
                   href={VIVERO_CONFIG.threadsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-primary underline hover:text-primary-hover"
+                  className="min-w-0 font-semibold text-primary underline hover:text-primary-hover [overflow-wrap:anywhere]"
                 >
                   @vivero.siempre.verde
                 </a>
@@ -108,9 +108,9 @@ export default function ContactoPage() {
           </div>
 
           {/* Location and pending confirmation note */}
-          <div className="bg-sage/40 border border-borderline rounded-lg p-5 space-y-2 text-xs sm:text-sm text-ink">
+          <div className="min-w-0 bg-sage/40 border border-borderline rounded-lg p-5 space-y-2 text-xs sm:text-sm text-ink">
             <h3 className="font-bold text-primary">Dirección y horarios de visita</h3>
-            <p className="text-muted leading-relaxed">
+            <p className="min-w-0 text-muted leading-relaxed [overflow-wrap:anywhere]">
               Para visitar las instalaciones o coordinar el retiro presencial de plantas y pedidos, te solicitamos escribir previamente por WhatsApp para coordinar la dirección exacta y el horario disponible de la jornada.
             </p>
             <div className="pt-2">
