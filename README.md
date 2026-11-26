@@ -6,6 +6,40 @@ Desarrollado con **Next.js (App Router)**, **React 19**, **TypeScript** y **Tail
 
 ---
 
+## 📸 Vistas del Proyecto (Capturas de Portafolio)
+
+### 🖥️ Versión Desktop
+
+#### 1. Portada e Identidad Editorial
+![Portada Desktop](docs/portfolio-screenshots/01-desktop-home-hero.png)
+
+#### 2. Catálogo Botánico con Filtros en Tiempo Real
+![Catálogo Desktop](docs/portfolio-screenshots/03-desktop-catalogo.png)
+
+#### 3. Ficha de Producto y Guía de Cuidados
+![Ficha de Producto Monstera](docs/portfolio-screenshots/04-desktop-producto-monstera.png)
+
+#### 4. Flujo de "Mi Consulta" (Panel Lateral Desplegable)
+![Panel Mi Consulta](docs/portfolio-screenshots/05-desktop-mi-consulta-drawer.png)
+
+#### 5. Propuesta y Formulario para Mayoristas
+![Sección Mayoristas](docs/portfolio-screenshots/06-desktop-mayoristas.png)
+
+#### 6. Contacto y Canales Oficiales
+![Contacto y Ubicación](docs/portfolio-screenshots/07-desktop-contacto.png)
+
+---
+
+### 📱 Versión Mobile (Diseño Responsivo)
+
+<p align="center">
+  <img src="docs/portfolio-screenshots/08-mobile-home.png" width="32%" alt="Mobile Inicio" />
+  <img src="docs/portfolio-screenshots/09-mobile-catalogo.png" width="32%" alt="Mobile Catálogo" />
+  <img src="docs/portfolio-screenshots/10-mobile-producto.png" width="32%" alt="Mobile Producto" />
+</p>
+
+---
+
 ## 🌿 Características implementadas
 
 1. **Arquitectura Multi-Página & SEO Dinámico:**
